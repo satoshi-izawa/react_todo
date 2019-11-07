@@ -28,7 +28,7 @@ interface RequireProps extends ComponentMixProps<any, any, any> {
 
 export function mix<
   T extends Constructor<RequireProps>
->(Clazz: T) {
+>(Clazz: T): T {
   return class extends Clazz {
     private _props!: Record<string, unknown>;
     private _state!: Record<string, unknown>;
