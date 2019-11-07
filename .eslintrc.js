@@ -78,8 +78,14 @@ module.exports = {
     // TSの型推論なら候補が全て列挙されているか判定でき優秀なので、これらを無効化
     "default-case": ["off"],
     "consistent-return": ["off"],
+    "no-useless-constructor": ["off"],
     // ambientでないd.tsからのimportで軒並み警告が出るので無効化
     "import/no-unresolved": ["off"],
+    // サポートに厳密に沿うのは難しいので、これらの指定を無効化
+    "jsx-a11y/no-noninteractive-tabindex": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
     // cssモジュール周りをimportするとき不便だったので無効化
     "@typescript-eslint/no-var-requires": "off",
     // 時々使うので無効化
@@ -94,6 +100,6 @@ module.exports = {
       {
         "argsIgnorePattern": "^_"
       }
-    ]
+    ],
   }
 }

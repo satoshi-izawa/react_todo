@@ -1,8 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { Router, Switch } from 'react-router';
+import { Router } from 'react-router';
 import { createBrowserHistory } from 'history';
 import { store } from './store';
+import { TodoListContainer } from './form/containers/todo_list_container';
 
 const style = require('./root.scss');
 
@@ -18,7 +19,7 @@ export const Root = () => (
       <React.StrictMode>
         <div id="main" className={style.main}>
           <Router history={history}>
-            <Switch />
+            <TodoListContainer />
           </Router>
         </div>
       </React.StrictMode>

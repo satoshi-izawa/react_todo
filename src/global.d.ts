@@ -3,3 +3,7 @@ declare const ENV: {
 };
 
 declare const BUILD: string;
+
+type ActionTypeCreator<T> = {
+  [P in keyof T]: { type: P } & T[P];
+}[keyof T];
