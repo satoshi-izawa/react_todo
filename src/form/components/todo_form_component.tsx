@@ -1,12 +1,16 @@
 import React from 'react';
 import { ComponentMixProps, convertToFC } from '../../_cores/bases/init_component';
 import { TodoModel } from '../../_cores/models/todo_model';
+import { TextInput } from '../../_commons/inputs/text_input';
 
 interface Props {
   todo: TodoModel | null;
 }
 
 class ComponentClass {
+  private _task = TextInput.new();
+  private _description = TextInput.new();
+
   public defaultProps() {
     return {
       todo: null,
@@ -18,10 +22,14 @@ class ComponentClass {
     return React.useMemo(() => (
       <div>
         <div>
-          {todo?.task ?? '-'}
+          <this._task.toJSX
+            value={todo?.task}
+          />
         </div>
         <div>
-          {todo?.description ?? '-'}
+          <this._description.toJSX
+            value={todo?.description}
+          />
         </div>
       </div>
     ), [todo]);

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+import { isShallowEqual } from '../utils/is_shallow_equal';
 
 type Constructor<T> = new (...args: any[]) => T;
 
@@ -14,28 +15,33 @@ type CreateProps<T extends Record<string, any>> =
     [P in Extract<keyof Props<T>, keyof DefaultProps<T>>]?: Props<T>[P];
   };
 
-export type ComponentMixProps<Props, T extends Record<string, any>> = {
+export interface ComponentMixProps<Props, T extends Record<string, any>> {
   props: Props;
   state: State<T>;
-  setter: { [P in keyof State<T>]: React.Dispatch<State<T>[P]> };
 
-  toJSX(props: CreateProps<T>): JSX.Element|null;
+  setState(state: Partial<State<T>>): void;
+  toJSX(props: CreateProps<T>): JSX.Element | null;
 }
 
 /** 初期化の過程で必要ですが、外には公開したくないプロパティ群です */
 type ExcludeUtilities = 'props'
   | 'state'
-  | 'setter'
-  | keyof RequireProps;
+  | 'syncKeys'
+  | 'setState'
+  | 'render'
+  | 'defaultState'
+  | 'defaultProps';
 
 type ExcludeUtilityMethods<T extends RequireProps> = {
   [P in Exclude<keyof T, ExcludeUtilities>]: T[P];
 }
 
-interface RequireProps extends ComponentMixProps<any, any> {
+interface RequireProps<Props = any> extends ComponentMixProps<Props, any> {
   render(): JSX.Element | null;
+
+  syncKeys?: () => string[];
   defaultState?: () => any;
-  defaultProps?: () => any;
+  defaultProps?: () => Partial<Props>;
 }
 
 export function mix<
@@ -44,7 +50,7 @@ export function mix<
   return class extends Clazz {
     private _props!: Record<string, unknown>;
     private _state!: Record<string, unknown>;
-    private _setter!: Record<string, React.Dispatch<any>>;
+    private _setter!: React.Dispatch<any>;
 
     public get props() {
       return this._props;
@@ -54,13 +60,11 @@ export function mix<
       return this._state;
     }
 
-    public get setter() {
-      return this._setter;
-    }
-
     public setState(newState: Partial<this['state']>) {
-      const keys = Object.keys(newState);
-      keys.forEach(k => this.setter[k](newState[k]));
+      this._setter({
+        ...this.state,
+        ...newState,
+      });
     }
 
     public toJSX = (props: CreateProps<T>) => this.__create(props);
@@ -68,6 +72,7 @@ export function mix<
     private __create(props: CreateProps<T>): JSX.Element | null {
       this._props = props as any;
       this.__initializeState();
+      this.__syncPropAndState();
       return this.render();
     }
 
@@ -76,11 +81,29 @@ export function mix<
       if (!state) {
         return;
       }
-      this._state = {} as any;
-      this._setter = {} as any;
-      Object.keys(state).forEach(k => {
-        [this._state[k], this._setter[k]] = React.useState(state[k]);
+      [this._state, this._setter] = React.useState(state);
+    }
+
+    private __syncPropAndState() {
+      if (!this.syncKeys) {
+        return;
+      }
+      const diff: any = {};
+      this.syncKeys().forEach((key: any) => {
+        const value = this.props[key];
+        const prevValue = React.useRef(value);
+        React.useLayoutEffect(() => {
+          if (this.state && isShallowEqual(this.state[key], value)) {
+            prevValue.current = value;
+          } else if (!isShallowEqual(prevValue.current, value)) {
+            diff[key] = value;
+            prevValue.current = value;
+          }
+        }, [value]);
       });
+      if (Object.keys(diff).length > 0) {
+        this.setState(diff);
+      }
     }
 
     // @ts-ignore
@@ -98,7 +121,7 @@ export function mix<
   };
 }
 
-export const convertToFC = <T extends RequireProps>(Clazz: Constructor<T>) => {
+export const convertToFC = <T extends RequireProps<T['props']>>(Clazz: Constructor<T>) => {
   const Mix = mix(Clazz);
   const func = (props: CreateProps<T>) => {
     const instance = React.useMemo(() => new Mix(), []);

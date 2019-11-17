@@ -2,16 +2,16 @@
   "compilerOptions": {
     "sourceMap": true,
     "strict": true,
-    "module": "es2015",
+    "module": "esnext",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es2019",
     "jsx": "react",
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "esModuleInterop": true,
     "importHelpers": true,
     "lib": [
-      "es2015",
+      "es2019",
       "dom"
     ]
   },
