@@ -15,7 +15,7 @@ interface BaseInputState<Value> extends Common<Value>{
 export abstract class BaseInput<
   Props extends BaseInputProps<any>,
   T extends {
-    defaultState(): BaseInputState<Props['value']>;
+    defaultState(): any;
     props: Props;
   }
   > {
@@ -23,7 +23,7 @@ export abstract class BaseInput<
     return ['value', 'disabled'];
   }
 
-  public defaultState() {
+  public defaultState(): BaseInputState<Props['value']> {
     const { value, disabled } = this.props;
     return { value, disabled };
   }
@@ -38,7 +38,7 @@ export abstract class BaseInput<
 export interface BaseInput<
   Props extends BaseInputProps<any>,
   T extends {
-    defaultState(): BaseInputState<Props['value']>;
+    defaultState(): any;
     props: Props;
   }
   > extends ComponentMixProps<Props, T > { }

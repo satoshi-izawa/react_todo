@@ -1,5 +1,5 @@
 import React from 'react';
-import { convertToFC, ComponentMixProps } from '../../_cores/bases/init_component';
+import { convertToFC } from '../../_cores/bases/init_component';
 import { BaseInput, BaseInputProps } from '../../_cores/bases/base_input';
 
 interface Props extends BaseInputProps<Value> {
@@ -28,6 +28,13 @@ class TextInputClass extends BaseInput<Props, TextInputClass> {
     return this.input.value || null;
   }
 
+  public setValue(value: Value) {
+    super.setValue(value);
+    if (this.input) {
+      this.input.value = value ?? '';
+    }
+  }
+
   public render() {
     const { value } = this.state;
     return React.useMemo(() => (
@@ -35,7 +42,5 @@ class TextInputClass extends BaseInput<Props, TextInputClass> {
     ), [this.state]);
   }
 }
-
-interface TextInputClass extends ComponentMixProps<Props, TextInputClass> { }
 
 export const TextInput = convertToFC(TextInputClass);

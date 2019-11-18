@@ -2,3 +2,7 @@
  * 共通変数やmixinなど
  * 複数ファイルから呼び出されるので、セレクタ等の成果物に含まれる記述をしないこと
  */
+$baseSize: 8px;
+$halfSize: 4px;
+$borderLight: 1px solid hsla(0, 0, 0, .1);
+$borderHeavy: 1px solid hsla(0, 0, 0, .2);

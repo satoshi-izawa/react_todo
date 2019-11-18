@@ -3,6 +3,7 @@ import { TodoModel } from '../models/todo_model';
 
 class Type {
   static readonly ADD = Symbol('ADD');
+  static readonly CHANGE = Symbol('CHANGE');
 }
 
 function createInitialState() {
@@ -17,12 +18,21 @@ const reducer = (state = createInitialState(), action: Action) => produce(state,
       const todo = new TodoModel();
       todo.update(action.todo);
       draft.todos.push(todo);
+      break;
+    }
+    case Type.CHANGE: {
+      const todo = draft.todos.find(t => t.id === action.todo.id);
+      todo?.update(action.todo);
+      break;
     }
   }
 });
 
 interface Actions {
   [Type.ADD]: {
+    todo: Todo;
+  };
+  [Type.CHANGE]: {
     todo: Todo;
   };
 }

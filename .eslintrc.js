@@ -86,6 +86,8 @@ module.exports = {
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
+    // Optional Chainingが使えないので一旦オフ
+    "no-unused-expressions": "off",
     // cssモジュール周りをimportするとき不便だったので無効化
     "@typescript-eslint/no-var-requires": "off",
     // 時々使うので無効化

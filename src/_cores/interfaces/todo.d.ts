@@ -1,6 +1,6 @@
 interface Todo {
   id: number;
-  task: string;
-  description: string;
+  task: string | null;
+  description: string | null;
   limit: string;
 }

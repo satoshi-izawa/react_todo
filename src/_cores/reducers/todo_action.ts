@@ -8,6 +8,13 @@ const action = {
       todo,
     });
   },
+
+  change: (todo: Todo) => {
+    dispatch({
+      type: TodoActionType.CHANGE,
+      todo,
+    });
+  },
 };
 
 export {
